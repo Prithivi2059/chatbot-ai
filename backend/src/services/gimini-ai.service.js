@@ -6,12 +6,23 @@ const ai = new GoogleGenAI({
 });
 
 async function createResponse(prompt) {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: prompt,
-  });
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: {
+        systemInstruction: `
+        Respond clearly and concisely. Keep answers brief, relevant, and to the point.
+        Use simple language and avoid jargon. Provide accurate and factual information
+        `,
+      },
+    });
 
-  return response.text;
+    return response.text;
+  } catch (error) {
+    console.error("Error generating response:", error);
+    throw new Error("Failed to generate response");
+  }
 }
 
 module.exports = createResponse;
