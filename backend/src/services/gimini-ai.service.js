@@ -5,11 +5,11 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-async function createResponse(prompt) {
+async function createResponse(chatHistory) {
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      contents: prompt,
+      contents: chatHistory,
       config: {
         systemInstruction: `
         Respond clearly and concisely. Keep answers brief, relevant, and to the point.

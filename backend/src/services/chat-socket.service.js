@@ -1,7 +1,7 @@
 const { Server } = require("socket.io");
 const createResponse = require("./gimini-ai.service");
 
-const history = [];
+const chatHistory = [];
 
 function initSocket(httpServer) {
   const io = new Server(httpServer);
@@ -14,9 +14,18 @@ function initSocket(httpServer) {
     });
 
     socket.on("message-user", async (message) => {
-      const response = await createResponse(message.prompt);
+      chatHistory.push({
+        role: "user",
+        parts: [{ text: message }],
+      });
+      const response = await createResponse(chatHistory);
 
-      socket.emit("message-ai", { response });
+      chatHistory.push({
+        role: "model",
+        parts: [{ text: response }],
+      });
+
+      socket.emit("message-ai", response);
     });
   });
 }
